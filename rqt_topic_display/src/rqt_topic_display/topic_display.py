@@ -52,6 +52,7 @@ class TopicDisplay(Plugin):
 
         # if self.topic_name
         self.topic_name = "string"
+        # TODO(lucasw) ros param
         self.update_topic()
         self.label = self._widget.findChild(QLabel, 'label')
         self.do_update_label.connect(self.update_label)
@@ -71,12 +72,13 @@ class TopicDisplay(Plugin):
         instance_settings.set_value('topic', self.topic_name)
 
     def update_topic(self):
-        rospy.loginfo("updating topic: " + self.topic_name)
+        # rospy.loginfo("updating topic: " + self.topic_name)
         self.sub = rospy.Subscriber(self.topic_name, String, self.handle_callback,
                                     queue_size=1)
 
 
     def restore_settings(self, plugin_settings, instance_settings):
+        # TODO(lucasw) make rosparam override saved settings
         if instance_settings.contains('topic'):
             self.topic_name = instance_settings.value('topic')
         rospy.loginfo('topic name: ' + self.topic_name)

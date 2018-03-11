@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<launch>
+
+	<node name="pub_strings" pkg="rqt_topic_display" type="pub_strings.py"
+			output="screen" />
+
+  <node name="rqt_generic" pkg="rqt_gui" type="rqt_gui"
+      args="--perspective-file $(find rqt_topic_display)/config/topic_display.perspective"
+      output="screen"
+      if="true">
+  </node>
+
+</launch>
