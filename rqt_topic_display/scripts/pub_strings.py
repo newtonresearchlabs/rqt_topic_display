@@ -23,6 +23,6 @@ while True:
             done = True
             break
         pub.publish(String(msg))
-        rospy.sleep(1)
+        rospy.sleep(2)
     if done:
         break

@@ -1,0 +1,7 @@
+# accumulate messages rather than replace them
+bool accumulate
+# unlimited if == 0
+uint32 max_msgs
+# this can be applied regardless of accumulate mode
+uint32 max_lines
+---

@@ -6,7 +6,8 @@ from qt_gui.plugin import Plugin
 from python_qt_binding import QtCore
 from python_qt_binding import loadUi
 from python_qt_binding.QtCore import QTimer, Signal
-from python_qt_binding.QtWidgets import QLabel, QWidget
+from python_qt_binding.QtWidgets import QLabel, QScrollArea, QWidget
+from rqt_topic_display.srv import *
 from std_msgs.msg import String
 
 
@@ -50,16 +51,55 @@ class TopicDisplay(Plugin):
         # Add widget to the user interface
         context.add_widget(self._widget)
 
+        self.accumulated = []
+        self.accumulate_req = AccumulateRequest()
+        # Temp debug
+        # self.accumulate_req.accumulate = True
+
         # if self.topic_name
         self.topic_name = "string"
         # TODO(lucasw) ros param
+        self.sub = None
         self.update_topic()
         self.label = self._widget.findChild(QLabel, 'label')
+        self.scroll_area = self._widget.findChild(QScrollArea, 'scroll_area')
         self.do_update_label.connect(self.update_label)
 
+        self.accumulate_service = rospy.Service('accumulate', Accumulate,
+                                                self.handle_accumulate)
+
+        self.timer = QTimer()
+        self.timer.start(200)
+        self.timer.timeout.connect(self.qt_update)
+
+    def qt_update(self):
+        # TODO(lucasw) after setText the scroll bar takes a moment to respond,
+        # so can't simply go to maximum after calling it
+        # TODO(lucasw) may not want to do this if user has been moving scroll bar
+        # around- need to detect that scroll bar was at bottom and only
+        # autoscroll then.
+        if self.accumulate_req.accumulate:
+            scroll_max = self.scroll_area.verticalScrollBar().maximum()
+            self.scroll_area.verticalScrollBar().setValue(scroll_max)
+
+    def handle_accumulate(self, req):
+        self.accumulate_req = req
+        if not self.accumulate_req.accumulate:
+            self.accumulated = []
+        return AccumulateResponse()
 
     def handle_callback(self, msg):
-        self.do_update_label.emit(msg)
+        string = None
+        if self.accumulate_req.accumulate:
+            string = String()
+            self.accumulated.append(msg.data)
+            for i in range(len(self.accumulated)):
+                string.data += self.accumulated[i] + "\n"
+            # remove final line ending
+            string.data = string.data[:-1]
+        else:
+            string = msg
+        self.do_update_label.emit(string)
 
     def update_label(self, msg):
         self.label.setText(msg.data)
@@ -73,6 +113,8 @@ class TopicDisplay(Plugin):
 
     def update_topic(self):
         # rospy.loginfo("updating topic: " + self.topic_name)
+        if self.sub:
+            self.sub.unregister()
         self.sub = rospy.Subscriber(self.topic_name, String, self.handle_callback,
                                     queue_size=1)
 
