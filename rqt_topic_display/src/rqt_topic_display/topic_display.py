@@ -51,6 +51,7 @@ class TopicDisplay(Plugin):
         # Add widget to the user interface
         context.add_widget(self._widget)
 
+        self.last_max_scroll = 0
         self.accumulated = []
         self.accumulate_req = AccumulateRequest()
         # Temp debug
@@ -79,8 +80,12 @@ class TopicDisplay(Plugin):
         # around- need to detect that scroll bar was at bottom and only
         # autoscroll then.
         if self.accumulate_req.accumulate:
-            scroll_max = self.scroll_area.verticalScrollBar().maximum()
-            self.scroll_area.verticalScrollBar().setValue(scroll_max)
+            # self.dirty = False
+            cur_scroll = self.scroll_area.verticalScrollBar().value()
+            max_scroll = self.scroll_area.verticalScrollBar().maximum()
+            if max_scroll > self.last_max_scroll and cur_scroll >= self.last_max_scroll:
+                self.scroll_area.verticalScrollBar().setValue(max_scroll)
+            self.last_max_scroll = max_scroll
 
     def handle_accumulate(self, req):
         self.accumulate_req = req
