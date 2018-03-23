@@ -66,7 +66,7 @@ class TopicDisplay(Plugin):
         self.scroll_area = self._widget.findChild(QScrollArea, 'scroll_area')
         self.do_update_label.connect(self.update_label)
 
-        self.accumulate_service = rospy.Service('accumulate', Accumulate,
+        self.accumulate_service = rospy.Service('~accumulate', Accumulate,
                                                 self.handle_accumulate)
 
         self.timer = QTimer()
