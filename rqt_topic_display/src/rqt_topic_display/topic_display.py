@@ -59,15 +59,14 @@ class TopicDisplay(Plugin):
 
         # if self.topic_name
         self.topic_name = "string"
+        self.accumulate_service_name = "~accumulate"
         # TODO(lucasw) ros param
         self.sub = None
+        self.accumulate_service = None
         self.update_topic()
         self.label = self._widget.findChild(QLabel, 'label')
         self.scroll_area = self._widget.findChild(QScrollArea, 'scroll_area')
         self.do_update_label.connect(self.update_label)
-
-        self.accumulate_service = rospy.Service('~accumulate', Accumulate,
-                                                self.handle_accumulate)
 
         self.timer = QTimer()
         self.timer.start(200)
@@ -115,6 +114,7 @@ class TopicDisplay(Plugin):
 
     def save_settings(self, plugin_settings, instance_settings):
         instance_settings.set_value('topic', self.topic_name)
+        instance_settings.set_value('accumulate', self.accumulate_service_name)
 
     def update_topic(self):
         # rospy.loginfo("updating topic: " + self.topic_name)
@@ -123,12 +123,24 @@ class TopicDisplay(Plugin):
         self.sub = rospy.Subscriber(self.topic_name, String, self.handle_callback,
                                     queue_size=1)
 
+        if self.accumulate_service:
+            self.accumulate_service.shutdown('')
+        try:
+            self.accumulate_service = rospy.Service(self.accumulate_service_name,
+                                                    Accumulate,
+                                                    self.handle_accumulate)
+        except rospy.ServiceException, ex:
+            rospy.logwarn("Can't run a rqt_topic_display accumulate service " +
+                          "with name already used: " +
+                          str(ex) + ", " + self.accumulate_service_name)
 
     def restore_settings(self, plugin_settings, instance_settings):
         # TODO(lucasw) make rosparam override saved settings
         if instance_settings.contains('topic'):
             self.topic_name = instance_settings.value('topic')
         rospy.loginfo('topic name: ' + self.topic_name)
+        if instance_settings.contains('accumulate'):
+            self.accumulate_service_name = instance_settings.value('accumulate')
         self.update_topic()
 
     #def trigger_configuration(self):
