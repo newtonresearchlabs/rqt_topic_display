@@ -1,5 +1,5 @@
 <library path="src">
-  <class name="My Plugin" type="rqt_topic_display.topic_display.TopicDisplay" base_class_type="rqt_gui_py::Plugin">
+  <class name="Topic Display" type="rqt_topic_display.topic_display.TopicDisplay" base_class_type="rqt_gui_py::Plugin">
     <description>
       Subscribe to a single topic (initially probably just text and next numerical) and display it, possibly with a label and with a configurable font size.  Threshold color background warnings may be introduced for numerical.
     </description>
@@ -17,4 +17,19 @@
       <statustip>Display values from a single (TBD multiple may be supported later) topic</statustip>
     </qtgui>
   </class>
+
+  <class name="Number Display" type="rqt_topic_display.number_display.NumberDisplay" base_class_type="rqt_gui_py::Plugin">
+    <description>
+      Subscribe to a numerical topic and display it, perhaps have optional label and thresholds with colors.
+    </description>
+    <qtgui>
+      <group>
+        <label>Topics</label>
+      </group>
+      <label>Number Display</label>
+      <icon type="theme">system-help</icon>
+      <statustip>Display values from a number topic</statustip>
+    </qtgui>
+  </class>
+
 </library>
