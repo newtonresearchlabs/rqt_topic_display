@@ -65,6 +65,7 @@ class NumberDisplay(Plugin):
 
         # if self.topic_name
         self.topic_name = "number"
+        self.precision = 3
         # TODO(lucasw) ros param
         self.sub = None
         self.update_topic()
@@ -84,7 +85,7 @@ class NumberDisplay(Plugin):
         self.do_update_label.emit(msg.data)
 
     def update_label(self, data):
-        self.label.setText(str(data))
+        self.label.setText("{:.{}f}".format(data, self.precision))
 
     def shutdown_plugin(self):
         # TODO unregister all publishers here
@@ -92,6 +93,7 @@ class NumberDisplay(Plugin):
 
     def save_settings(self, plugin_settings, instance_settings):
         instance_settings.set_value('topic', self.topic_name)
+        instance_settings.set_value('precision', self.precision)
 
     def init_callback(self, msg):
         topic_type = msg._connection_header['type']
@@ -118,6 +120,8 @@ class NumberDisplay(Plugin):
         # TODO(lucasw) make rosparam override saved settings
         if instance_settings.contains('topic'):
             self.topic_name = instance_settings.value('topic')
+        if instance_settings.contains('precision'):
+            self.precision = instance_settings.value('precision')
         rospy.loginfo('topic name: ' + self.topic_name)
         self.update_topic()
 
