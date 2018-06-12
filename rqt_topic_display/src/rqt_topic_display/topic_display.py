@@ -106,7 +106,12 @@ class TopicDisplay(Plugin):
         self.do_update_label.emit(string)
 
     def update_label(self, msg):
-        self.label.setText(msg.data)
+        # If the refresh button is pressed this will throw
+        # maybe because the emit is triggered after the plugin is torn down?
+        try:
+            self.label.setText(msg.data)
+        except:
+            pass
 
     def shutdown_plugin(self):
         # TODO unregister all publishers here

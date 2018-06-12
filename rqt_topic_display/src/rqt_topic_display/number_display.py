@@ -89,7 +89,13 @@ class NumberDisplay(Plugin):
         text = "{:.{}f}".format(data, self.precision)
         if self.label_text and self.label_text != "":
             text = self.label_text + ": " + text
-        self.label.setText(text)
+        # TODO(lucasw)
+        # If the refresh button is pressed this will throw
+        # maybe because the emit is triggered after the plugin is torn down?
+        try:
+            self.label.setText(text)
+        except:
+            pass
 
     def shutdown_plugin(self):
         # TODO unregister all publishers here
