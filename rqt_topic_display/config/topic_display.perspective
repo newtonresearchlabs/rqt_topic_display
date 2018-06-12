@@ -73,6 +73,10 @@
                 "precision": {
                   "type": "repr",
                   "repr": "3"
+                },
+                "label": {
+                  "type": "repr",
+                  "repr": "u'Something'"
                 }
               },
               "groups": {}

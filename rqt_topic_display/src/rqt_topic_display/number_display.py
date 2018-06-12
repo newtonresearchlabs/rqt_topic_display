@@ -64,6 +64,7 @@ class NumberDisplay(Plugin):
                                 ]
 
         # if self.topic_name
+        self.label_text = ""
         self.topic_name = "number"
         self.precision = 3
         # TODO(lucasw) ros param
@@ -85,13 +86,17 @@ class NumberDisplay(Plugin):
         self.do_update_label.emit(msg.data)
 
     def update_label(self, data):
-        self.label.setText("{:.{}f}".format(data, self.precision))
+        text = "{:.{}f}".format(data, self.precision)
+        if self.label_text and self.label_text != "":
+            text = self.label_text + ": " + text
+        self.label.setText(text)
 
     def shutdown_plugin(self):
         # TODO unregister all publishers here
         pass
 
     def save_settings(self, plugin_settings, instance_settings):
+        instance_settings.set_value('label', self.label_text)
         instance_settings.set_value('topic', self.topic_name)
         instance_settings.set_value('precision', self.precision)
 
@@ -118,6 +123,8 @@ class NumberDisplay(Plugin):
 
     def restore_settings(self, plugin_settings, instance_settings):
         # TODO(lucasw) make rosparam override saved settings
+        if instance_settings.contains('label'):
+            self.label_text = instance_settings.value('label')
         if instance_settings.contains('topic'):
             self.topic_name = instance_settings.value('topic')
         if instance_settings.contains('precision'):
