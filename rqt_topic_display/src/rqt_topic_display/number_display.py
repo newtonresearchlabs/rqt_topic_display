@@ -56,6 +56,7 @@ class NumberDisplay(Plugin):
                                 'std_msgs/Int32',
                                 'std_msgs/Int64',
                                 'std_msgs/Int8',
+                                'std_msgs/UInt8',
                                 'std_msgs/UInt16',
                                 'std_msgs/UInt32',
                                 'std_msgs/UInt64',
