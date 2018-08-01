@@ -110,8 +110,8 @@ class NumberDisplay(Plugin):
         topic_type = msg._connection_header['type']
         self.sub.unregister()
 
+        topic_class = roslib.message.get_message_class(topic_type)
         if topic_type in self.supported_types:
-            topic_class = roslib.message.get_message_class(topic_type)
             rospy.loginfo(topic_type + " " + str(topic_class))
             self.sub = rospy.Subscriber(self.topic_name, topic_class,
                                         self.handle_callback,
