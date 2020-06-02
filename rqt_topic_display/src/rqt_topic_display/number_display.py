@@ -25,8 +25,8 @@ class NumberDisplay(Plugin):
         parser = ArgumentParser()
         # Add argument(s) to the parser.
         parser.add_argument("-q", "--quiet", action="store_true",
-                      dest="quiet",
-                      help="Put plugin in silent mode")
+                            dest="quiet",
+                            help="Put plugin in silent mode")
         args, unknowns = parser.parse_known_args(context.argv())
         if not args.quiet:
             print 'arguments: ', args
@@ -95,7 +95,7 @@ class NumberDisplay(Plugin):
         # maybe because the emit is triggered after the plugin is torn down?
         try:
             self.label.setText(text)
-        except:
+        except Exception as ex:
             pass
 
     def shutdown_plugin(self):
@@ -127,7 +127,6 @@ class NumberDisplay(Plugin):
         self.sub = rospy.Subscriber(self.topic_name, rospy.AnyMsg, self.init_callback,
                                     queue_size=1)
 
-
     def restore_settings(self, plugin_settings, instance_settings):
         # TODO(lucasw) make rosparam override saved settings
         if instance_settings.contains('label'):
@@ -139,7 +138,7 @@ class NumberDisplay(Plugin):
         rospy.loginfo('topic name: ' + self.topic_name)
         self.update_topic()
 
-    #def trigger_configuration(self):
+    # def trigger_configuration(self):
         # Comment in to signal that the plugin has a way to configure
         # This will enable a setting button (gear icon) in each dock widget title bar
         # Usually used to open a modal configuration dialog

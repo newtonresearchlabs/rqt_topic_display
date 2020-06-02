@@ -1,16 +1,18 @@
-cmake_minimum_required(VERSION 2.8.3)
-project(rqt_topic_display)
+cmake_minimum_required(VERSION 3.0)
+project(rqt_topic_display VERSION 0.0.1)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   message_generation
+  roslint
   rospy
   rqt_gui_py
   std_msgs
 )
 
+roslint_python()
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 
