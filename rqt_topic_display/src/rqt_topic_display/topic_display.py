@@ -5,9 +5,9 @@ import rospy
 from qt_gui.plugin import Plugin
 from python_qt_binding import QtCore
 from python_qt_binding import loadUi
-from python_qt_binding.QtCore import QTimer, Signal
+from python_qt_binding.QtCore import QTimer
 from python_qt_binding.QtWidgets import QLabel, QScrollArea, QWidget
-from rqt_topic_display.srv import *
+from rqt_topic_display.srv import Accumulate, AccumulateRequest, AccumulateResponse
 from std_msgs.msg import String
 
 
@@ -29,8 +29,8 @@ class TopicDisplay(Plugin):
                             help="Put plugin in silent mode")
         args, unknowns = parser.parse_known_args(context.argv())
         if not args.quiet:
-            print 'arguments: ', args
-            print 'unknowns: ', unknowns
+            print('arguments: ', args)
+            print('unknowns: ', unknowns)
 
         # Create QWidget
         self._widget = QWidget()
@@ -111,7 +111,7 @@ class TopicDisplay(Plugin):
         try:
             self.label.setText(msg.data)
         except Exception as ex:
-            pass
+            rospy.logdebug(ex)
 
     def shutdown_plugin(self):
         # TODO unregister all publishers here
@@ -134,10 +134,10 @@ class TopicDisplay(Plugin):
             self.accumulate_service = rospy.Service(self.accumulate_service_name,
                                                     Accumulate,
                                                     self.handle_accumulate)
-        except rospy.ServiceException, ex:
-            rospy.logwarn("Can't run a rqt_topic_display accumulate service " +
-                          "with name already used: " +
-                          str(ex) + ", " + self.accumulate_service_name)
+        except rospy.ServiceException as ex:
+            rospy.logwarn("Can't run a rqt_topic_display accumulate service "
+                          + "with name already used: "
+                          + str(ex) + ", " + self.accumulate_service_name)
 
     def restore_settings(self, plugin_settings, instance_settings):
         # TODO(lucasw) make rosparam override saved settings

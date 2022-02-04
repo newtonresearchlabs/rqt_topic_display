@@ -12,6 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
 )
 
+set(ROSLINT_PYTHON_OPTS "--ignore=W503" "1>&2")
 roslint_python()
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -84,7 +85,7 @@ generate_messages(
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES rqt_topic_display
-#  CATKIN_DEPENDS rospy rqt_gui_py
+  CATKIN_DEPENDS message_runtime rospy rqt_gui_py std_msgs
 #  DEPENDS system_lib
 )
 
@@ -126,8 +127,8 @@ include_directories(
 ## Mark executable scripts (Python etc.) for installation
 ## in contrast to setup.py, you can choose the destination
 install(PROGRAMS
-  scripts/rqt_topic_display
   scripts/rqt_number_display
+  scripts/${PROJECT_NAME}
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 

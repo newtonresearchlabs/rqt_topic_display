@@ -6,9 +6,9 @@ import rospy
 from qt_gui.plugin import Plugin
 from python_qt_binding import QtCore
 from python_qt_binding import loadUi
-from python_qt_binding.QtCore import QTimer, Signal
-from python_qt_binding.QtWidgets import QLabel, QScrollArea, QWidget
-from std_msgs.msg import Float32, Float64, Int16, Int32, Int64, Int8, UInt16, UInt32, UInt64, UInt8
+from python_qt_binding.QtCore import QTimer
+from python_qt_binding.QtWidgets import QLabel, QWidget
+# from std_msgs.msg import Float32, Float64, Int16, Int32, Int64, Int8, UInt16, UInt32, UInt64, UInt8
 
 
 class NumberDisplay(Plugin):
@@ -29,8 +29,8 @@ class NumberDisplay(Plugin):
                             help="Put plugin in silent mode")
         args, unknowns = parser.parse_known_args(context.argv())
         if not args.quiet:
-            print 'arguments: ', args
-            print 'unknowns: ', unknowns
+            print('arguments: ', args)
+            print('unknowns: ', unknowns)
 
         # Create QWidget
         self._widget = QWidget()
@@ -51,7 +51,17 @@ class NumberDisplay(Plugin):
         # Add widget to the user interface
         context.add_widget(self._widget)
 
-        self.supported_types = [
+        self.supported_types = ['marti_common_msgs/BoolStamped',
+                                'marti_common_msgs/Float32Stamped',
+                                'marti_common_msgs/Float64Stamped',
+                                'marti_common_msgs/Int16Stamped',
+                                'marti_common_msgs/Int32Stamped',
+                                'marti_common_msgs/Int64Stamped',
+                                'marti_common_msgs/Int8Stamped',
+                                'marti_common_msgs/UInt16Stamped',
+                                'marti_common_msgs/UInt32Stamped',
+                                'marti_common_msgs/UInt64Stamped',
+                                'marti_common_msgs/UInt8Stamped',
                                 'std_msgs/Int16',
                                 'std_msgs/Int32',
                                 'std_msgs/Int64',
@@ -61,7 +71,7 @@ class NumberDisplay(Plugin):
                                 'std_msgs/UInt32',
                                 'std_msgs/UInt64',
                                 'std_msgs/Float32',
-                                'std_msgs/Float64'
+                                'std_msgs/Float64',
                                 ]
 
         # if self.topic_name
@@ -84,7 +94,15 @@ class NumberDisplay(Plugin):
     def handle_callback(self, msg):
         # TODO(lucasw) throttle this if too frequent
         # or use qt_update above instead of emit
-        self.do_update_label.emit(msg.data)
+        value = 0.0
+        if hasattr(msg, 'data'):
+            value = msg.data
+        elif hasattr(msg, 'value'):
+            value = msg.value
+        else:
+            rospy.logwarn_once(f"no date or value in msg {msg}")
+            return
+        self.do_update_label.emit(value)
 
     def update_label(self, data):
         text = "{:.{}f}".format(data, self.precision)
@@ -96,6 +114,7 @@ class NumberDisplay(Plugin):
         try:
             self.label.setText(text)
         except Exception as ex:
+            rospy.logdebug(ex)
             pass
 
     def shutdown_plugin(self):
@@ -118,7 +137,7 @@ class NumberDisplay(Plugin):
                                         self.handle_callback,
                                         queue_size=2)
         else:
-            rospy.logwarn("unsupported type " + topic_class)
+            rospy.logwarn(f"unsupported type {topic_class} {topic_type}")
 
     def update_topic(self):
         # rospy.loginfo("updating topic: " + self.topic_name)

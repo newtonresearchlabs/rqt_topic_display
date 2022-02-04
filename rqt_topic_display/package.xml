@@ -2,7 +2,7 @@
 <package>
   <name>rqt_topic_display</name>
   <version>0.0.1</version>
-  <description>The rqt_topic_display package</description>
+  <description>Display a numerical or string topic in an rqt widget</description>
 
   <maintainer email="wsacul@gmail.com">Lucas Walter</maintainer>
   <license>BSD</license>
@@ -16,6 +16,7 @@
   <run_depend>message_runtime</run_depend>
   <run_depend>roslint</run_depend>
   <run_depend>rospy</run_depend>
+  <run_depend>rqt_gui</run_depend>
   <run_depend>rqt_gui_py</run_depend>
   <run_depend>std_msgs</run_depend>
 
