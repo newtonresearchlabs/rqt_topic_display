@@ -137,7 +137,7 @@ class NumberDisplay(Plugin):
                                         self.handle_callback,
                                         queue_size=2)
         else:
-            rospy.logwarn("unsupported type " + str(class)
+            rospy.logwarn("unsupported type " + str(topic_class)
                           + " " + str(topic_type))
 
     def update_topic(self):
