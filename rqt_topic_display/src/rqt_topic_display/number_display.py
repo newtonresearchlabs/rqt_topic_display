@@ -100,7 +100,7 @@ class NumberDisplay(Plugin):
         elif hasattr(msg, 'value'):
             value = msg.value
         else:
-            rospy.logwarn_once(f"no date or value in msg {msg}")
+            rospy.logwarn_once("no date or value in msg " + str(msg))
             return
         self.do_update_label.emit(value)
 
@@ -137,7 +137,8 @@ class NumberDisplay(Plugin):
                                         self.handle_callback,
                                         queue_size=2)
         else:
-            rospy.logwarn(f"unsupported type {topic_class} {topic_type}")
+            rospy.logwarn("unsupported type " + str(class)
+                          + " " + str(topic_type))
 
     def update_topic(self):
         # rospy.loginfo("updating topic: " + self.topic_name)
